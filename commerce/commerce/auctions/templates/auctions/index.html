@@ -1,0 +1,41 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<nav>
+    {% if user.is_authenticated %}
+        Signed in as <strong>{{ user.username }}</strong>.
+        <a href="{% url 'index' %}">Active Listings</a> |
+        <a href="{% url 'categories' %}">Categories</a> |
+        <a href="{% url 'watchlist' %}">Watchlist</a> |
+        <a href="{% url 'create' %}">Create Listing</a> |
+        <a href="{% url 'logout' %}">Log Out</a>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a> |
+        <a href="{% url 'register' %}">Register</a>
+    {% endif %}
+</nav>
+<hr>
+
+
+<h2>Active Listings</h2>
+
+{% for listing in listings %}
+    <div style="border: 1px solid #ccc; margin-bottom: 1em; padding: 10px; display: flex;">
+        <div style="width: 150px; margin-right: 20px;">
+            {% if listing.image_url %}
+                <img src="{{ listing.image_url }}" alt="{{ listing.title }}" style="max-width: 150px;">
+            {% else %}
+                <img src="https://via.placeholder.com/150" alt="No image available">
+            {% endif %}
+        </div>
+        <div>
+            <h3><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h3>
+            <p><strong>Price: ${{ listing.current_price }}</strong></p>
+            <p>{{ listing.description|truncatewords:15 }}</p>
+            <small>Created {{ listing.created_at|date:"M d, Y, g:i a" }}</small>
+        </div>
+    </div>
+{% empty %}
+    <p>No active listings yet.</p>
+{% endfor %}
+{% endblock %}
